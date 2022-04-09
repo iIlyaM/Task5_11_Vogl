@@ -11,8 +11,25 @@ class Point:
 class Game:
 
     def __init__(self, level_number):
-        self.game = self.get_level(level_number)
-        self.field_size = len(self.game)
+        self.game = GameService.get_level(level_number)
+
+    @property
+    def field_size(self):
+        return len(self.game)
+
+    @property
+    def balls_count(self):
+        count = 0
+        for i in range(self.field_size):
+            count += sum(self.game[i])
+        return count
+
+    @property
+    def board(self):
+        return self.game
+
+
+class GameService:
 
     @staticmethod
     def get_level(num: int) -> list[list: int]:
@@ -26,10 +43,26 @@ class Game:
 
         return ball_positions
 
-    def in_field_range(self, row, col) -> bool:
-        return 0 < row < self.field_size and 0 < col < self.field_size
+    @staticmethod
+    def get_between(curr_pos: Point, target_pos: Point):
+        delta_row = (target_pos.r - curr_pos.r) / 2
+        delta_col = (target_pos.c - curr_pos.c) / 2
 
-    def get_possible_moves(self, curr_pos: Point):
+        return Point(curr_pos.r + delta_row, curr_pos.c + delta_col)
+
+    @staticmethod
+    def make_move(board: list[list: int], curr_pos: Point, target_pos: Point):
+        kill_cell = board.get_between(curr_pos, target_pos)
+        board.game[target_pos.r][target_pos.c] = 1
+        board.game[curr_pos.r][curr_pos.c] = 0
+        board.game[kill_cell.r][kill_cell.c] = 0
+
+    @staticmethod
+    def in_field_range(board, row, col) -> bool:
+        return 0 < row < len(board) and 0 < col < len(board)
+
+    @staticmethod
+    def get_possible_moves(board: list[list: int], curr_pos: Point):
         possible_moves = set()
         deltas = [-1, 1]
 
@@ -44,14 +77,10 @@ class Game:
                 else:
                     col += j
                     next_c += 2 * j
-                temp_cell = self.game[row][col]
-                if self.in_field_range(row, col) and temp_cell == 1:
-                    temp_cell = self.game[next_r][next_c]
-                    if self.in_field_range(next_r, next_c) and temp_cell == 0:
-                        possible_moves.add(Point(next_r, next_c))
+                temp_cell = board[row][col]
+                if GameService.in_field_range(board, row, col) and temp_cell == 1:
+                    temp_cell = board[next_r][next_c]
+                    if GameService.in_field_range(board, next_r, next_c) and temp_cell == 0:
+                        possible_moves.add((next_r, next_c))
 
-        return possible_moves
-
-    def make_move(self, curr_pos: Point):
-        # todo  Доделать совершения хода, продумать остаток логики
-        return  None
+        return list(possible_moves)
