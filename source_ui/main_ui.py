@@ -1,8 +1,9 @@
+import enum
+
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-
 
 from source_ui.main_screen_ui import Ui_MainWindow
 from source_ui.game_process_ui import Ui_vogl_g_w
@@ -16,6 +17,7 @@ import functools
 
 image = 'pictures/pepe_bear (2).png'
 white_color = 'background-color:white; border-radius:5px'
+red_color = 'background-color:red; border-radius:5px'
 green_color = 'background: rgb(0,255,0); border-radius:5px'
 
 
@@ -47,9 +49,10 @@ class GameUI(QMainWindow):
 
         uic.loadUi('source_ui/vogl_g_w.ui', self)
 
-        self.game = Game(1)
+        self.game = Game(3)
         self.game_service = GameService()
         self.board = self.game.board
+        self.game_board = self.board.copy()
         self.main_window = main
         self.point_to_label = self.init_game()
 
@@ -58,16 +61,19 @@ class GameUI(QMainWindow):
 
     def click_to_move(self, row, col):
         def click(event):
-            state = 0
-            if hasattr(self, 'pos_x') and hasattr(self, 'pos_y'):
-                self.prev = Point(self.pos_x, self.pos_y)
+            state = StateEnum.start
+            if hasattr(self, 'pos_r') and hasattr(self, 'pos_c'):
+                self.prev = Point(self.pos_r, self.pos_c)
                 self.light_possible_moves(self.board, self.curr, state)
-                state = 1
-            self.pos_x = col
-            self.pos_y = row
+            state = StateEnum.in_process
             self.curr = Point(row, col)
-            self.light_possible_moves(self.board, self.curr, state)
-            self.repaint()
+            if self.game_board[row][col] == 1:
+                self.pos_r = row
+                self.pos_c = col
+                self.prev = Point(self.pos_r, self.pos_c)
+                self.moves = self.light_possible_moves(self.board, self.curr, state)
+            if self.game_board[row][col] == 0:
+                self.show_move(self.game_board, self.moves, self.prev, self.curr)
 
         return click
 
@@ -92,11 +98,46 @@ class GameUI(QMainWindow):
                 layout.addWidget(label, row, column)
         return point_to_label
 
+    def draw_board(self, point_label_dict: dict):
+        size = len(self.board)
+        for row in range(size):
+            for column in range(size):
+                temp_label = point_label_dict.get((row, column))
+                if self.game_board[row][column] == 0:
+                    temp_label.clear()
+                    temp_label.setStyleSheet(white_color)
+                if self.game_board[row][column] == 1:
+                    temp_label.setStyleSheet(white_color)
+                    pixmap = QPixmap(image)
+                    temp_label.setPixmap(pixmap)
+                    temp_label.resize(pixmap.width(), pixmap.height())
+
     def light_possible_moves(self, board: list[list: int], curr_pos: Point, state):
         moves = self.game_service.get_possible_moves(board, curr_pos)
         for i in range(len(moves)):
-            curr_label = self.point_to_label.get(moves[0])
-            if state == 1:
+            curr_label = self.point_to_label.get(moves[i])
+            if state == StateEnum.in_process:
                 curr_label.setStyleSheet(green_color)
-            if state == 0:
+            if state == StateEnum.start:
                 curr_label.setStyleSheet(white_color)
+                pass
+        return moves
+
+    def show_move(self, board, moves: list, curr_pos: Point, target_pos: Point):
+        for i in moves:
+            if i == (target_pos.r, target_pos.c):
+                self.game_service.make_move(board, curr_pos, target_pos)
+                self.draw_board(self.point_to_label)
+                break
+        pass
+
+    def get_key(self, d, value):
+        for k, v in d.items():
+            if v == value:
+                return k
+
+
+class StateEnum(enum.Enum):
+    start = 0,
+    in_process = 1,
+    to_step_over = 2

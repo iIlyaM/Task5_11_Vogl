@@ -4,8 +4,8 @@ import re
 class Point:
 
     def __init__(self, r, c):
-        self.r = r
-        self.c = c
+        self.r = int(r)
+        self.c = int(c)
 
 
 class Game:
@@ -39,7 +39,7 @@ class GameService:
             lines = file_object.readlines()
         lines = filter(lambda x: x.strip(), lines)
         for line in lines:
-            ball_positions.append(list(map(float, re.split('; |, | |,', line))))
+            ball_positions.append(list(map(int, re.split('; |, | |,', line))))
 
         return ball_positions
 
@@ -52,14 +52,14 @@ class GameService:
 
     @staticmethod
     def make_move(board: list[list: int], curr_pos: Point, target_pos: Point):
-        kill_cell = board.get_between(curr_pos, target_pos)
-        board.game[target_pos.r][target_pos.c] = 1
-        board.game[curr_pos.r][curr_pos.c] = 0
-        board.game[kill_cell.r][kill_cell.c] = 0
+        kill_cell = GameService.get_between(curr_pos, target_pos)
+        board[target_pos.r][target_pos.c] = 1
+        board[curr_pos.r][curr_pos.c] = 0
+        board[kill_cell.r][kill_cell.c] = 0
 
     @staticmethod
     def in_field_range(board, row, col) -> bool:
-        return 0 < row < len(board) and 0 < col < len(board)
+        return 0 <= row < len(board) and 0 <= col < len(board)
 
     @staticmethod
     def get_possible_moves(board: list[list: int], curr_pos: Point):
@@ -77,10 +77,15 @@ class GameService:
                 else:
                     col += j
                     next_c += 2 * j
-                temp_cell = board[row][col]
-                if GameService.in_field_range(board, row, col) and temp_cell == 1:
-                    temp_cell = board[next_r][next_c]
-                    if GameService.in_field_range(board, next_r, next_c) and temp_cell == 0:
-                        possible_moves.add((next_r, next_c))
+
+                if next_r < 0 or next_c < 0:
+                    continue
+
+                if GameService.in_field_range(board, row, col):
+                    temp_cell = board[row][col]
+                    if temp_cell == 1:
+                        temp_cell = board[next_r][next_c]
+                        if GameService.in_field_range(board, next_r, next_c) and temp_cell == 0:
+                            possible_moves.add((next_r, next_c))
 
         return list(possible_moves)
