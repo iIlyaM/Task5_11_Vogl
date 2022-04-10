@@ -10,7 +10,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow
-from source_ui.game_process_ui import Ui_vogl_g_w
+import os
+
+path = 'levels'
 
 
 class Ui_MainWindow(QMainWindow):
@@ -24,23 +26,29 @@ class Ui_MainWindow(QMainWindow):
         self.setFont(font)
         self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
+
         self.startButton = QtWidgets.QPushButton(self.centralwidget)
         self.startButton.setGeometry(QtCore.QRect(300, 360, 181, 91))
         font = QtGui.QFont()
         font.setPointSize(16)
         self.startButton.setFont(font)
         self.startButton.setObjectName("startButton")
+
         self.levelsBox = QtWidgets.QComboBox(self.centralwidget)
         self.levelsBox.setGeometry(QtCore.QRect(320, 130, 131, 31))
         self.levelsBox.setObjectName("levelsBox")
+        self.fill_combobox(self.levelsBox)
+
         self.level_label = QtWidgets.QLabel(self.centralwidget)
         self.level_label.setGeometry(QtCore.QRect(330, 80, 171, 31))
         self.level_label.setObjectName("level_label")
+
         self.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(self)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 24))
         self.menubar.setObjectName("menubar")
         self.setMenuBar(self.menubar)
+
         self.statusbar = QtWidgets.QStatusBar(self)
         self.statusbar.setObjectName("statusbar")
         self.setStatusBar(self.statusbar)
@@ -48,11 +56,9 @@ class Ui_MainWindow(QMainWindow):
         self.retranslateUi(self)
         QtCore.QMetaObject.connectSlotsByName(self)
 
-
-
-
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.startButton.setText(_translate("MainWindow", "Start"))
         self.level_label.setText(_translate("MainWindow", "Choose level"))
+

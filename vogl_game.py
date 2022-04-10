@@ -1,4 +1,7 @@
 import re
+import os
+
+path = 'levels'
 
 
 class Point:
@@ -106,3 +109,7 @@ class GameService:
                     if not GameService.get_possible_moves(board, temp_point):
                         impossible_to_move_counter += 1
         return 'Lose' if game.balls_count == impossible_to_move_counter else None
+
+    @staticmethod
+    def count_levels():
+        return sum(os.path.isfile(os.path.join(path, f)) for f in os.listdir(path))

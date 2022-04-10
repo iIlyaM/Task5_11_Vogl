@@ -1,19 +1,15 @@
 import enum
 
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-from source_ui.main_screen_ui import Ui_MainWindow
 from source_ui.game_process_ui import Ui_vogl_g_w
 from PyQt5.QtWidgets import QMainWindow
-from vogl_game import *
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5 import uic
 from vogl_game import *
-import functools
 
 image = 'pictures/pepe_bear (2).png'
 white_color = 'background-color:white; border-radius:5px'
@@ -32,10 +28,18 @@ class MainWindowUI(QMainWindow):
 
         self.button = self.findChild(QPushButton, "startButton")
 
+        self.level_box = self.findChild(QComboBox, 'levelsBox')
+        self.fill_combobox(self.level_box)
+
         self.button.clicked.connect(lambda: self.game_window())
         self.button.clicked.connect(self.close)
 
         self.game = GameUI(self)
+
+    def fill_combobox(self, level_box: QtWidgets.QComboBox):
+        files = os.listdir(path)
+        for i in files:
+            level_box.addItem(i)
 
     def game_window(self):
         self.g_window = GameUI(self)
@@ -49,7 +53,7 @@ class GameUI(QMainWindow):
 
         uic.loadUi('source_ui/vogl_g_w.ui', self)
 
-        self.game = Game(3)
+        self.game = Game(4)
         self.game_service = GameService()
         self.board = self.game.board
         self.game_board = self.board.copy()
@@ -74,6 +78,7 @@ class GameUI(QMainWindow):
                 self.moves = self.light_possible_moves(self.board, self.curr, state)
             if self.game_board[row][col] == 0:
                 self.show_move(self.game_board, self.moves, self.prev, self.curr)
+            print(GameService.is_game_over(self.game))
 
         return click
 
@@ -130,11 +135,6 @@ class GameUI(QMainWindow):
                 self.draw_board(self.point_to_label)
                 break
         pass
-
-    def get_key(self, d, value):
-        for k, v in d.items():
-            if v == value:
-                return k
 
 
 class StateEnum(enum.Enum):
