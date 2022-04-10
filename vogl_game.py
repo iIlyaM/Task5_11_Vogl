@@ -78,7 +78,7 @@ class GameService:
                     col += j
                     next_c += 2 * j
 
-                if next_r < 0 or next_c < 0:
+                if not GameService.in_field_range(board, next_r, next_c):
                     continue
 
                 if GameService.in_field_range(board, row, col):
@@ -89,3 +89,20 @@ class GameService:
                             possible_moves.add((next_r, next_c))
 
         return list(possible_moves)
+
+    @staticmethod
+    def is_game_over(game: Game):
+        if game.balls_count == 1:
+            return 'Victory'
+
+        board = game.board
+
+        impossible_to_move_counter = 0
+
+        for row in range(len(board)):
+            for column in range(len(board[row])):
+                if board[row][column] == 1:
+                    temp_point = Point(row, column)
+                    if not GameService.get_possible_moves(board, temp_point):
+                        impossible_to_move_counter += 1
+        return 'Lose' if game.balls_count == impossible_to_move_counter else None
