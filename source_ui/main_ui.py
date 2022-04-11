@@ -56,6 +56,12 @@ class GameUI(QMainWindow):
 
         uic.loadUi('source_ui/vogl_g_w.ui', self)
 
+        self.exit_button = self.findChild(QPushButton, "exitButton")
+        self.exit_button.clicked.connect(lambda: self.close())
+
+        self.restart_button = self.findChild(QPushButton, "restartButton")
+        self.restart_button.clicked.connect(lambda: self.restart_game())
+
         self.game = Game(level)
         self.game_service = GameService()
         self.board = self.game.board
@@ -138,6 +144,10 @@ class GameUI(QMainWindow):
                 self.draw_board(self.point_to_label)
                 break
         pass
+
+    def restart_game(self):
+        self.main_window.show()
+        self.close()
 
 
 class StateEnum(enum.Enum):
