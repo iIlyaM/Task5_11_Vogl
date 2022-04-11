@@ -108,7 +108,7 @@ class GameService:
                     temp_point = Point(row, column)
                     if not GameService.get_possible_moves(board, temp_point):
                         impossible_to_move_counter += 1
-        return 'Lose' if game.balls_count == impossible_to_move_counter else None
+        return 'Defeat' if game.balls_count == impossible_to_move_counter else None
 
     @staticmethod
     def count_levels():

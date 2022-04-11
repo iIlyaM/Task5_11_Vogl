@@ -4,7 +4,6 @@ from PyQt5 import QtWidgets
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-from source_ui.game_process_ui import Ui_vogl_g_w
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
@@ -62,6 +61,8 @@ class GameUI(QMainWindow):
         self.restart_button = self.findChild(QPushButton, "restartButton")
         self.restart_button.clicked.connect(lambda: self.restart_game())
 
+        self.grid = self.findChild(QGridLayout, "gridLayout")
+
         self.game = Game(level)
         self.game_service = GameService()
         self.board = self.game.board
@@ -70,7 +71,7 @@ class GameUI(QMainWindow):
         self.point_to_label = self.init_game()
 
     def init_game(self):
-        return self.draw_game_field(Ui_vogl_g_w.get_layout(self), self.game)
+        return self.draw_game_field(self.grid, self.game)
 
     def click_to_move(self, row, col):
         def click(event):
@@ -87,7 +88,12 @@ class GameUI(QMainWindow):
                 self.moves = self.light_possible_moves(self.board, self.curr, state)
             if self.game_board[row][col] == 0:
                 self.show_move(self.game_board, self.moves, self.prev, self.curr)
-            print(GameService.is_game_over(self.game))
+            result = GameService.is_game_over(self.game)
+
+            if result is None:
+                pass
+            else:
+                self.show_result_window(self.main_window, GameService.is_game_over(self.game))
 
         return click
 
@@ -145,9 +151,46 @@ class GameUI(QMainWindow):
                 break
         pass
 
+    def show_result_window(self, main_window, result):
+        self.res_win = GameResultUI(main_window, result)
+        self.res_win.show()
+
+
     def restart_game(self):
         self.main_window.show()
         self.close()
+
+
+class GameResultUI(QMainWindow):
+    def __init__(self, main, result):
+        super(GameResultUI, self).__init__()
+
+        uic.loadUi('source_ui/result.ui', self)
+
+        self.image_label = self.findChild(QLabel, "image_label")
+        self.text_label = self.findChild(QLabel, "text_label")
+
+        self.restart_btn = self.findChild(QPushButton, 'menu_button')
+        self.exit_btn = self.findChild(QPushButton, 'exit_button')
+
+        self.show_result(result, self.image_label, self.text_label)
+
+        self.main_window = main
+
+    def show_result(self, result, img_label: QLabel, txt_label: QLabel):
+        img_label.setAlignment(Qt.AlignCenter)
+        txt_label.setAlignment(Qt.AlignCenter)
+
+        if result == 'Victory':
+            pixmap = QPixmap(image)
+            img_label.setPixmap(pixmap)
+            img_label.resize(pixmap.width(), pixmap.height())
+            txt_label.setText('Congratulations! You won!')
+        if result == 'Defeat':
+            pixmap = QPixmap(image)
+            img_label.setPixmap(pixmap)
+            img_label.resize(pixmap.width(), pixmap.height())
+            txt_label.setText("Oh no, no more moves! Well, that's okay next time you win!")
 
 
 class StateEnum(enum.Enum):
