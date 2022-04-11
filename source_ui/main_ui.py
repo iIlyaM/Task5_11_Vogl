@@ -154,7 +154,7 @@ class GameUI(QMainWindow):
         pass
 
     def show_result_window(self, main_window, result):
-        self.res_win = GameResultUI(main_window, result)
+        self.res_win = GameResultUI(main_window, self, result)
         self.res_win.show()
 
     def restart_game(self):
@@ -163,7 +163,7 @@ class GameUI(QMainWindow):
 
 
 class GameResultUI(QMainWindow):
-    def __init__(self, main, result):
+    def __init__(self, main, game, result):
         super(GameResultUI, self).__init__()
 
         uic.loadUi('source_ui/result.ui', self)
@@ -172,11 +172,17 @@ class GameResultUI(QMainWindow):
         self.text_label = self.findChild(QLabel, "text_label")
 
         self.restart_btn = self.findChild(QPushButton, 'menu_button')
+        self.restart_btn.clicked.connect(lambda: self.back_to_menu())
+        self.restart_btn.clicked.connect(self.close)
+
         self.exit_btn = self.findChild(QPushButton, 'exit_button')
+        self.exit_btn.clicked.connect(lambda: self.exit_game())
+        self.exit_btn.clicked.connect(self.close)
 
         self.show_result(result, self.image_label, self.text_label)
 
         self.main_window = main
+        self.game_window = game
 
     def show_result(self, result, img_label: QLabel, txt_label: QLabel):
         img_label.setAlignment(Qt.AlignCenter)
@@ -192,6 +198,13 @@ class GameResultUI(QMainWindow):
             img_label.setPixmap(pixmap)
             img_label.resize(pixmap.width(), pixmap.height())
             txt_label.setText("Oh no, no more moves! \n Well, that's okay next time you win!")
+
+    def back_to_menu(self):
+        self.game_window.close()
+        self.main_window.show()
+
+    def exit_game(self):
+        self.game_window.close()
 
 
 class StateEnum(enum.Enum):
