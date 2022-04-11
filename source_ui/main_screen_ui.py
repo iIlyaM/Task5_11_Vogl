@@ -10,7 +10,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow
-import os
+from PyQt5.QtCore import Qt
 
 path = 'levels'
 
@@ -37,11 +37,19 @@ class Ui_MainWindow(QMainWindow):
         self.levelsBox = QtWidgets.QComboBox(self.centralwidget)
         self.levelsBox.setGeometry(QtCore.QRect(320, 130, 131, 31))
         self.levelsBox.setObjectName("levelsBox")
-        self.fill_combobox(self.levelsBox)
 
         self.level_label = QtWidgets.QLabel(self.centralwidget)
         self.level_label.setGeometry(QtCore.QRect(330, 80, 171, 31))
         self.level_label.setObjectName("level_label")
+
+        self.selectedLevel = QtWidgets.QLabel(self.centralwidget)
+        self.selectedLevel.setGeometry(QtCore.QRect(330, 210, 151, 17))
+        self.selectedLevel.setObjectName("selectedLevel")
+
+        self.levelLine = QtWidgets.QLineEdit(self.centralwidget)
+        self.levelLine.setGeometry(QtCore.QRect(330, 260, 113, 25))
+        self.levelLine.setAlignment(QtCore.Qt.AlignCenter)
+        self.levelLine.setObjectName("levelLine")
 
         self.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(self)

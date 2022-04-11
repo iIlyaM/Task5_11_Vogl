@@ -24,36 +24,40 @@ class MainWindowUI(QMainWindow):
 
         uic.loadUi('source_ui/vogl.ui', self)
         self.show()
-        #
 
         self.button = self.findChild(QPushButton, "startButton")
 
-        self.level_box = self.findChild(QComboBox, 'levelsBox')
+        self.level_line = self.findChild(QLineEdit, "levelLine")
+
+        self.level_box = self.findChild(QComboBox, "levelsBox")
         self.fill_combobox(self.level_box)
+        self.level_box.currentTextChanged.connect(self.level_selected)
 
-        self.button.clicked.connect(lambda: self.game_window())
+        self.button.clicked.connect(lambda: self.game_window(self.level_line.text()))
         self.button.clicked.connect(self.close)
-
-        self.game = GameUI(self)
 
     def fill_combobox(self, level_box: QtWidgets.QComboBox):
         files = os.listdir(path)
         for i in files:
             level_box.addItem(i)
 
-    def game_window(self):
-        self.g_window = GameUI(self)
+    def game_window(self, level):
+        self.g_window = GameUI(self, level)
         self.g_window.show()
+
+    def level_selected(self):
+        lvl = self.level_box.currentText()
+        self.level_line.setText(lvl)
 
 
 class GameUI(QMainWindow):
 
-    def __init__(self, main):
+    def __init__(self, main, level):
         super(GameUI, self).__init__()
 
         uic.loadUi('source_ui/vogl_g_w.ui', self)
 
-        self.game = Game(4)
+        self.game = Game(level)
         self.game_service = GameService()
         self.board = self.game.board
         self.game_board = self.board.copy()
