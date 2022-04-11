@@ -33,7 +33,7 @@ class MainWindowUI(QMainWindow):
         self.fill_combobox(self.level_box)
         self.level_box.currentTextChanged.connect(self.level_selected)
 
-        self.button.clicked.connect(lambda: self.game_window(self.level_line.text()))
+        self.button.clicked.connect(lambda: self.game_window(self.level_box.currentText()))
         self.button.clicked.connect(self.close)
 
     def fill_combobox(self, level_box: QtWidgets.QComboBox):
@@ -46,8 +46,7 @@ class MainWindowUI(QMainWindow):
         self.g_window.show()
 
     def level_selected(self):
-        lvl = self.level_box.currentText()
-        self.level_line.setText(lvl)
+        pass
 
 
 class GameUI(QMainWindow):

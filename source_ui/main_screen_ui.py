@@ -46,11 +46,6 @@ class Ui_MainWindow(QMainWindow):
         self.selectedLevel.setGeometry(QtCore.QRect(330, 210, 151, 17))
         self.selectedLevel.setObjectName("selectedLevel")
 
-        self.levelLine = QtWidgets.QLineEdit(self.centralwidget)
-        self.levelLine.setGeometry(QtCore.QRect(330, 260, 113, 25))
-        self.levelLine.setAlignment(QtCore.Qt.AlignCenter)
-        self.levelLine.setObjectName("levelLine")
-
         self.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(self)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 24))
