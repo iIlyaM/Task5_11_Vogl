@@ -11,6 +11,8 @@ from PyQt5 import uic
 from vogl_game import *
 
 image = 'pictures/pepe_bear (2).png'
+victory_image = 'pictures/h_pepe.png'
+defeat_image = 'pictures/think_pepe.png'
 white_color = 'background-color:white; border-radius:5px'
 red_color = 'background-color:red; border-radius:5px'
 green_color = 'background: rgb(0,255,0); border-radius:5px'
@@ -155,7 +157,6 @@ class GameUI(QMainWindow):
         self.res_win = GameResultUI(main_window, result)
         self.res_win.show()
 
-
     def restart_game(self):
         self.main_window.show()
         self.close()
@@ -182,15 +183,15 @@ class GameResultUI(QMainWindow):
         txt_label.setAlignment(Qt.AlignCenter)
 
         if result == 'Victory':
-            pixmap = QPixmap(image)
+            pixmap = QPixmap(victory_image)
             img_label.setPixmap(pixmap)
             img_label.resize(pixmap.width(), pixmap.height())
             txt_label.setText('Congratulations! You won!')
         if result == 'Defeat':
-            pixmap = QPixmap(image)
+            pixmap = QPixmap(defeat_image)
             img_label.setPixmap(pixmap)
             img_label.resize(pixmap.width(), pixmap.height())
-            txt_label.setText("Oh no, no more moves! Well, that's okay next time you win!")
+            txt_label.setText("Oh no, no more moves! \n Well, that's okay next time you win!")
 
 
 class StateEnum(enum.Enum):

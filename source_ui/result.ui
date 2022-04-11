@@ -62,19 +62,22 @@
     <property name="text">
      <string/>
     </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
    </widget>
    <widget class="QLabel" name="text_label">
     <property name="geometry">
      <rect>
       <x>196</x>
-      <y>330</y>
+      <y>310</y>
       <width>441</width>
-      <height>31</height>
+      <height>61</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>14</pointsize>
+      <pointsize>12</pointsize>
      </font>
     </property>
     <property name="text">
